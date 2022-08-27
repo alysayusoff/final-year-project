@@ -1,0 +1,105 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content row">
+            <div style="flex: 4;">
+                <div class="box shadow welcome-header">
+                    <div style="background-color: rgba(0, 0, 0, 0.7); color: white; padding: 20px; border-radius: 5px;">
+                        <span style="font-size: 18px; font-weight: bold;">Welcome to LivePile!</span><br/>
+                        <span style="font-size: 14px;">On our website, you can chat and code simultaneously with other programmers and post questions on our forum.</span>
+                    </div>
+                </div>
+                <div class="box shadow">
+                    <h3>Latest Questions</h3>
+                    <div>
+                        {% if new_posts %}
+                        {% for post in new_posts %}
+                        <div class="divider"></div>
+                        <div style="margin: 5px 0 0 0;">
+                            <div style="font-size: 14px;">
+                                <a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'profile' post.author %}"><span style="font-size: 12px; font-weight: 500;">@</span>{{ post.author }}</a>
+                                posted a question 
+                                <span style="font-weight: bold;">
+                                    {{ post.get_elapsed_time }}ago
+                                </span>
+                            </div>
+                            <div style="font-size: 20px; margin: 3px 0 3px 0;">
+                                <a class="title" style="text-decoration: none; color: black;" href="{% url 'post' post.pk %}">{{ post.title }}</a>
+                            </div>
+                            <div class="row">
+                                {% if post.get_tags %}
+                                {% for tag in post.get_tags %}
+                                <form class="col" method="post" action="/search/">
+                                    {% csrf_token %}
+                                    <input class="tag" name="tag" type="submit" value="{{ tag }}" />
+                                </form>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="divider"></div>
+                        <div style="margin-top: 5px;">
+                            Whoops! No posts to show.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div style="flex: 1;">
+                <div class="ask-button" style="margin-bottom: 10px; display: flex;">
+                    <a class="blue shadow" href="/ask/">Ask a Question</a>
+                </div>
+                <div class="box shadow" style="margin-bottom: 10px;">
+                    <h4>Newest Members</h4>
+                    <div class="divider"></div>
+                    <div>
+                        {% if new_members %}
+                        {% for member in new_members %}
+                        <div class="row vertical-align" style="margin-top: 10px;">
+                            <div style="max-height: 40px;">
+                                <img src="{{ member.avatar.url }}" height="40" width="40" />
+                            </div>
+                            <div class="col horizontal-align" style="margin-left: 10px;">
+                                <div style="font-weight: bold; margin-bottom: 3px;">
+                                    <a style="text-decoration: none; color: black;" href="{% url 'profile' member.user %}">{{ member.fname }} {{ member.lname }}</a>
+                                </div>
+                                <div class="row">
+                                    <div class="tag-disabled">
+                                        {{ member.get_num_posts }} posts
+                                    </div>
+                                    <div class="tag-disabled">
+                                        {{ member.get_num_replies }} replies
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div style="margin-top: 5px;">
+                            Whoops! No members right now.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="box shadow col">
+                    <h4>Categories</h4>
+                    <div class="divider"></div>
+                    <div class="col">
+                        {% if tags %}
+                        {% for tag in tags %}
+                        <form class="col" method="post" action="/search/">
+                            {% csrf_token %}
+                            <input class="tag" style="width: 100%; margin: 0 0 8px 0; padding: 5px 0;" name="tag" style="margin: 0 0 7px 0;" type="submit" value="{{ tag }}" />
+                        </form>
+                        {% endfor %}
+                        <a class="a-link" style="text-align: right;" href="/tags/">View all categories &#8594</a>
+                        {% else %}
+                        No categories to show.
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+{% endblock %}

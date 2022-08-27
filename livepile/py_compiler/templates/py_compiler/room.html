@@ -1,0 +1,165 @@
+{% extends "forum/index.html" %}
+
+{% block content %}
+        <div class="content row white shadow" style="margin: 10px">
+            <!-- compiler -->
+            <div class="col" style="flex: 1.5;">
+                <div class="row vertical-align" style="border-bottom: 0.5px solid lightgray;">
+                    <h3 style="flex: 1; margin: 7px;">Compiler</h3>
+                    <button id="compiler_button" class="blue button" style="margin-right: 5px;" type="submit">RUN</button>
+                </div>
+                <textarea id="compiler" class="compiler" style="flex: 1;" name="code"></textarea>
+            </div>
+            <!-- output -->
+            <div class="col" style="flex: 1.5;">
+                <div class="row" style="border-left: 0.5px solid gray; border-right: 0.5px solid gray;">
+                    <h3 style="flex: 1; margin: 7px;">Output</h3>
+                </div>
+                <textarea id="output" class="output" style="flex: 1;" disabled></textarea>
+            </div>
+            <div class="col" style="flex: 1;">
+                <!-- welcome message -->
+                <div style="padding: 10px; border-bottom: 1px solid #c3c3c3;">
+                    <h2>Welcome to {{ room_name }}, {{ username }}!</h2>
+                    <span>In this room, you can chat with other collaborators and write code at the same time. Send a message or type in the compiler to get started!</span>
+                </div>
+                <!-- participants -->
+                <div class="col" style="min-height: 130px; padding: 10px; border-bottom: 1px solid #c3c3c3;">
+                    <h3 style="margin-bottom: 5px;">Collaborators</h3>
+                    <textarea class="textarea" style="font-weight: bold;" id="participants" disabled></textarea>
+                </div>
+                <!-- chat -->
+                <div class="col" style="padding: 10px; flex-basis: 100%;">
+                    <h3 style="margin-bottom: 5px;">Chat</h3>
+                    <textarea class="textarea" id="chat" disabled></textarea>
+                    <div class="row" style="margin-top: 5px; min-height: 50px;">
+                        <textarea style="flex: 1; resize: none;" id="message" type="text" placeholder="Send a message..."></textarea>
+                        <input id="send" class="blue button" style="margin: 0 0 0 5px;" type="button" value="Send" />
+                    </div>
+                </div>
+            </div>
+        </div>
+        {{ room_name|json_script:"room_name" }}
+        {{ username|json_script:"username" }}
+        <script>
+            // var codeMirror = CodeMirror.fromTextArea(document.getElementById('compiler'), {
+            //     mode: 'python',
+            //     theme: 'eclipse',
+            //     lineNumbers: true,
+            //     styleActiveLine: true,
+            //     matchBrackets: true,
+            // });
+            // codeMirror.setSize("100%", "100%");
+
+            var runCode;
+            const roomName = JSON.parse(document.getElementById('room_name').textContent);
+            const userName = JSON.parse(document.getElementById('username').textContent);
+
+            const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomName + '/?username=' + userName);
+            chatSocket.onclose = function (e) { console.error('Chat socket closed unexpectedly.'); }
+
+            // send message when a user enters
+            chatSocket.onopen = function (e) {
+                chatSocket.send(JSON.stringify({ 
+                    'receive_type': 'enter',
+                    'username': userName, 
+                    'message': ' has joined the room!' 
+                }));
+            }
+            // send message when a user leaves
+            window.onunload = function(e) {
+                chatSocket.send(JSON.stringify({ 
+                    'receive_type': 'exit',
+                    'username': userName, 
+                    'message': ' has left the room.' 
+                }));
+            }
+            // chat
+            document.querySelector('#message').onkeyup = function (e) {
+                if (e.keyCode === 13 && e.shiftKey) {}
+                else if (e.keyCode === 13) { document.querySelector('#send').click(); }
+            }
+            document.querySelector('#send').onclick = function (e) {
+                var message = ': ' + document.querySelector('#message').value;
+                if (message.endsWith('\n')) {
+                    message = message.replace(/\n+$/, "");
+                }
+                document.querySelector('#message').value = '';
+                chatSocket.send(JSON.stringify({ 
+                    'receive_type': 'chat',
+                    'username': userName, 
+                    'message': message
+                }));
+            }
+            // compiler
+            document.getElementById('compiler').addEventListener('keydown', function(e) {
+                if (e.key == 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "   " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 3;
+                }
+            });
+            document.querySelector('#compiler').onkeyup = function(e) {
+                runCode = false;
+                const code = document.querySelector('#compiler').value;
+                chatSocket.send(JSON.stringify({
+                    'receive_type' : 'compiler',
+                    'code' : code,
+                    'runCode' : runCode
+                }));
+            }
+            // codeMirror.on('change', function (e) {
+            //     runCode = false;
+            //     const code = codeMirror.getValue();
+            //     chatSocket.send(JSON.stringify({
+            //         'receive_type' : 'compiler',
+            //         'code' : code,
+            //         'runCode' : runCode
+            //     }));
+            // });
+            document.querySelector('#compiler_button').onclick = function(e) {
+                runCode = true;
+                const code = document.querySelector('#compiler').value;
+                chatSocket.send(JSON.stringify({
+                    'receive_type' : 'compiler',
+                    'code' : code,
+                    'runCode' : runCode
+                }));
+            }
+            // update respective components when message is sent
+            chatSocket.onmessage = function (e) {
+                const data = JSON.parse(e.data);
+                if (data.receive_type == 'update_users') {
+                    document.querySelector('#chat').value += (data.username + data.message + '\n');
+
+                    var users = '';
+                    for (var i = 0; i < data.participants.length; i++) {
+                        if (data.participants[i]['username'] === userName) {
+                            users += (data.participants[i]['username'] + " (You)\n");
+                        }
+                        else {
+                            users += (data.participants[i]['username'] + '\n');
+                        }
+                    }
+                    document.querySelector('#participants').value = users;
+                }
+                if (data.receive_type == 'chat') {
+                    if (data.username === userName) {
+                        document.querySelector('#chat').value += (data.username + ' (You)' + data.message + '\n');
+                    } else {
+                        document.querySelector('#chat').value += (data.username + data.message + '\n');
+                    }
+                    document.querySelector('#chat').scrollTop = document.querySelector('#chat').scrollHeight;
+                }
+                if (data.receive_type == 'compiler') {
+                    document.querySelector('#compiler').value = data.code;
+                    if (data.runCode == true) {
+                        document.querySelector('#output').value = data.output;
+                        runCode == false;
+                    }
+                }
+            }
+        </script>
+{% endblock %}

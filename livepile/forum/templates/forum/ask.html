@@ -1,0 +1,52 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content">
+            <div class="col">
+                <div class="box">
+                    {% if posted %}
+                    <div class="horizontal-align">
+                        <span>Your question has been posted! <a class="a-link" href="{% url 'post' post.pk %}">Go to question</a>.</span>
+                    </div>
+                    {% else %}
+                    <h2>Ask a Question</h2>
+                    <div style="border-top: 1px solid #e0e0e0; margin: 5px 0;"></div>
+                    <form method="post" action="/ask/">
+                        {% csrf_token %}
+                        <div class="col" style="margin-bottom: 10px;">
+                            <span style="margin-bottom: 3px; font-weight: bold;">Title</span>
+                            <input type="text" name="title" style="padding: 5px;" placeholder="E.g. How do I print a string?" required/>
+                        </div>
+                        <div class="col" style="margin-bottom: 10px;">
+                            <span style="margin-bottom: 3px; font-weight: bold;">Content</span>
+                            <textarea name="content" rows="10" style="resize: none; padding: 5px;" placeholder="Describe your problem..." required></textarea>
+                            <span style="font-size: 13px; margin-top: 2px;">Any output can be placed within &#60;code&#62;...&#60;/code&#62; e.g. &#60;code&#62;Hello World!&#60;/code&#62;</span>
+                        </div>
+                        <div class="col" style="flex: 1; margin-bottom: 10px;">
+                            <span style="margin-bottom: 3px; font-weight: bold;">Code</span>
+                            <textarea id="code" name="code" rows="10" style="resize: none; padding: 5px;" placeholder="Place your code here"></textarea>
+                        </div>
+                        <div class="col" style="margin-bottom: 10px;">
+                            <span style="margin-bottom: 3px; font-weight: bold;">Tags</span>
+                            <input type="text" name="tags" style="padding: 5px;" placeholder="python,python-3,javascript" />
+                            <span style="font-size: 13px; margin-top: 2px;">Separate tags with commas e.g. python,python-3,javascript</span>
+                        </div>
+                        {{ errormsg }}
+                        <input class="blue form-button" style="margin: 0;" type="submit" value="POST QUESTION" />
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <script>
+            document.querySelector('#code').addEventListener('keydown', function(e) {
+                if (e.key == 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "   " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 3;
+                }
+            });
+        </script>
+{% endblock %}

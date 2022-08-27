@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Livepile: A Real-Time Compiler and Forum</title>
+        <link rel="stylesheet" type="text/css" href="../../static/css/livepile.css">
+        <link rel="stylesheet" type="text/css" href="../../static/css/codemirror.css">
+        <link rel="stylesheet" type="text/css" href="../../static/css/eclipse.css">
+        <script src="../../static/js/codemirror.js"></script>
+        <script src="../../static/js/python.js"></script>
+        <script src="../../static/js/active-line.js"></script>
+        <script src="../../static/js/matchbrackets.js"></script>
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/">LivePile</a></li>
+                <li style="flex: 1;">
+                    <form style="display: flex; flex: 1;" method="post" action="/search/">
+                        {% csrf_token %}
+                        <input id="search" name="search" type="text" style="flex: 1;" placeholder="Search forum for questions" />
+                    </form>
+                </li>
+                <li><a href="/">Forum</a></li>
+                <li><a href="/join/">Compiler</a></li>
+                <!-- <li><a href="#">About</a></li> -->
+                {% if user.is_authenticated %}
+                <li class="col dropdown">
+                    <a href="{% url 'profile' my_profile.user %}">Hello, {{ my_profile.fname }}!</a>
+                    <div class="col dropdown-content">
+                        <a href="{% url 'profile' my_profile.user %}">Profile</a>
+                        <a href="/logout/">Logout</a>
+                    </div>
+                </li>
+                {% else %}
+                <li>
+                    <form method="get" action="/login/">
+                        <input class="green button" type="submit" value="Login" />
+                    </form>
+                </li>
+                <li>
+                    <form method="get" action="/register/">
+                        <input class="blue button" type="submit" value="Register" />
+                    </form>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% block content %} Didn't render content {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,137 @@
+html, body {
+    background-color:#e1e1e1;
+    margin: 0 auto;
+    width: 100%;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+nav {
+    background-color: #414141; 
+    /* padding: 0px 10px;  */
+    height: 100%; 
+    position: sticky; 
+    top: 0;
+}
+nav ul {
+    list-style: none; 
+    margin: 0; 
+    padding: 0;
+}
+nav ul li {
+    padding: 8px 8px;
+    display: flex;
+    align-items: center;
+}
+nav ul li a {
+    text-decoration: none; 
+    color: white; 
+    font-size: 16px;
+}
+.nav-link:hover {
+    background-color: #292929;
+}
+.nav-button {
+    padding: 5px 8px; 
+    border-radius: 5px;
+}
+nav input {
+    flex: 1; 
+    padding: 5px 8px; 
+    font-size: 12px;
+}
+.content {
+    margin: 5px;
+}
+.row {
+    display: flex;
+    flex-direction: row;
+}
+.col {
+    display: flex;
+    flex-direction: column;
+}
+.center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.horizontal-align {
+    display: flex;
+    justify-content: center;
+}
+.vertical-align {
+    display: flex;
+    align-items: center;
+}
+.white { 
+    background-color: white; 
+}
+.gray { 
+    background-color: #e5e5e5; 
+}
+.lightgray { 
+    background-color: #f0f0f0; 
+}
+.blue {
+    background-color: #2aa4c9; 
+    color: white; 
+    font-weight: bold;
+}
+.blue:hover {
+    background-color: #2483a0;
+}
+.blue:active {
+    background-color: #185f75;
+}
+.green {
+    background-color: #13CE66;
+    color: white; 
+    font-weight: bold;
+}  
+.green:hover {
+    background-color: #16b35c;
+}  
+.green:active {
+    background-color: #198f4e;
+}           
+.box {
+    flex: 1;
+    margin: 5px;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: white;
+}
+.shadow {
+    box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+}
+h1, h2, h3 {
+    margin: 0;
+    padding: 0;
+}
+h1 {
+    text-align: center;
+}
+.divider {
+    width: 90%; 
+    border-top: 1px solid #e0e0e0; 
+    margin: 10px;
+}
+.form-button {
+    margin: 5px; 
+    padding: 10px; 
+    border-style: none; 
+    border-radius: 5px;
+}
+.compiler {
+    border-width: 0px; 
+    resize: none; 
+    padding: 10px 10px;
+}
+.output {
+    background-color: #414141; 
+    color: white;
+}
+.chat-textarea {
+    flex-basis: 100%; 
+    resize: none; 
+    padding: 5px 5px; 
+}

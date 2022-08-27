@@ -1,0 +1,19 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content">
+            <div class="col vertical-align">
+                <form class="box shadow col" style="font-weight: bold;" method="post" action="/edit/" enctype='multipart/form-data'>
+                    {% csrf_token %}
+                    <h1>Update Your Profile</h1>
+                    <div class="divider"></div>
+                    First Name{{ profile_form.fname }}
+                    Last Name{{ profile_form.lname }}
+                    Username{{ user_form.username }}
+                    Email{{ user_form.email }}
+                    Avatar<br/><span style="margin: 5px 0;">{{ profile_form.avatar }}</span>
+                    <input class="blue button" style="margin: 5px 0 0 0;" type="submit" value="Update Profile" />
+                </form>
+            </div>
+        </div>
+{% endblock %}

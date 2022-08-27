@@ -1,0 +1,106 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content">
+            <div class="col">
+                {% if requested_profile %}
+                <!-- user information -->
+                <div class="box shadow row">
+                    <!-- user's requested_profile picture -->
+                    <div style="max-height: 100px;">
+                        <img style="border-radius: 50px;" src="{{ requested_profile.avatar.url }}" height="100" width="100" />
+                    </div>
+                    <div class="col horizontal-align" style="flex: 1; padding: 10px;">
+                        <div class="row">
+                            <!-- user's name -->
+                            <div  style="font-size: 24px; font-weight: bold;">
+                                {{ requested_profile.fname }} {{ requested_profile.lname }}
+                            </div>
+                            <!-- user's group -->
+                            <div class="vertical-align"  style="padding: 0 15px; font-size: 14px;">
+                                {% if requested_profile.user.is_superuser %}
+                                &#x2654 Admin
+                                {% else %}
+                                Member
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- user metadata -->
+                        <div class="row" style="margin: 6px 0;">
+                            {{ requested_profile.get_num_posts }} posts
+                            <div style="width: 5px; height: 5px; background-color: black; border-radius: 2.5px; margin: auto 10px;"></div>
+                            {{ requested_profile.get_num_replies }} replies
+                        </div>
+                        <!-- user join date -->
+                        <div>
+                            Joined {{ requested_profile.created.date }}
+                        </div>
+                    </div>
+                    {% if requested_profile.user == my_profile.user %}
+                    <div style="align-self: flex-end;">
+                        <form method="get" action="/edit/">
+                            <input class="blue button" style="margin-right: 0;" type="submit" value="Edit Your Profile" />
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="row">
+                    <!-- user's posts -->
+                    <div class="box shadow" style="height: fit-content;">
+                        <div>
+                            <span style="font-size: 20px;">Posts ({{ requested_profile.get_num_posts }})</span>
+                            <span style="font-size: 13px; color: red; margin-left: 5px;">{{ post_deleted }}</span>
+                        </div>
+                        {% if requested_profile.get_posts %}
+                        {% for post in requested_profile.get_posts %}
+                        <div class="divider"></div>
+                        <div class="row vertical-align">
+                            <a class="title" style="text-decoration: none; color: black; flex: 1;" href="{% url 'post' post.pk %}">{{ post.title }}</a>
+                            {% if user.is_authenticated and requested_profile.user == user %}
+                            <form method="post" action="/profile/{{ user }}/">
+                                {% csrf_token %}
+                                <input name="delete_post" type="text" value="{{ post.pk }}" hidden />
+                                <input class="blue button" type="submit" style="margin-right: 0;" value="Delete Post" />
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="divider"></div>
+                        No posts.
+                        {% endif %}
+                    </div>
+                    <!-- user's replies -->
+                    <div class="box shadow" style="height: fit-content;">
+                        <div>
+                            <span style="font-size: 20px;">Replies ({{ requested_profile.get_num_replies }})</span>
+                            <span style="font-size: 13px; color: red; margin-left: 5px;">{{ reply_deleted }}</span>
+                        </div>
+                        {% if requested_profile.get_replies %}
+                        {% for reply in requested_profile.get_replies %}
+                        <div class="divider"></div>
+                        <div class="row vertical-align">
+                            <a class="title" style="text-decoration: none; color: black; flex: 1;" href="{% url 'post' reply.post.pk %}">{{ reply.post.title }}</a>
+                            {% if user.is_authenticated and requested_profile.user == user %}
+                            <form method="post" action="/profile/{{ user }}/">
+                                {% csrf_token %}
+                                <input name="delete_reply" type="text" value="{{ reply.pk }}" hidden />
+                                <input type="submit" class="blue button" style="margin-right: 0;" value="Delete Reply" />
+                            </form>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        {% else %}
+                        <div class="divider"></div>
+                        No replies.
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="center" style="margin: 20px;">
+                    User not found
+                </div>
+                {% endif %}
+            </div>
+        </div>
+{% endblock %}

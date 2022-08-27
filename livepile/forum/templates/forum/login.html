@@ -1,0 +1,26 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content col vertical-align">
+            <form method="post" action="/login/">
+                {% csrf_token %}
+                <div class="box shadow col vertical-align" style="padding: 10px 15px;">
+                    <div class="row vertical-align" style="margin: 10px 0;">
+                        <h1>LivePile</h1>
+                        <img src="../../static/imgs/logo.png" height="25" width="25" style="margin-left: 10px;" />
+                    </div>
+                    <div class="divider" style="width: 100%;"></div>
+                    <span style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">Sign In</span>
+                    <input class="gray form-button" type="text" name="username" placeholder="Username" required/>
+                    <input class="gray form-button" type="password" name="password" placeholder="Password" required/>
+                    {% if errormsg %}
+                    <span style="font-size: 14px; margin: 5px 0; color: red;">{{ errormsg }}</span>
+                    {% endif %}
+                    <input class="blue form-button" type="submit" value="Login" />
+                    <input type="hidden" name="next" value="{{ request.GET.next }}" />
+                    <!-- <a style="font-size: 14px; margin-top: 5px;" href="#">Forgot your password?</a> -->
+                    <span style="font-size: 14px; margin-top: 5px;">Don't have an account? Register <a class="a-link" href="/register/">here</a>.</span>
+                </div>
+            </form>
+        </div>
+{% endblock %}

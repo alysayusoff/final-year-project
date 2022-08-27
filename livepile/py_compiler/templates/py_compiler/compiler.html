@@ -1,0 +1,32 @@
+{% extends "forum/index.html" %}
+
+{% block content %}
+        <div class="content row white shadow" style="margin: 10px">
+            <div class="col" style="flex: 1;">
+                <form class="col" style="flex: 1;" method="post" action="/compiler/">
+                    {% csrf_token %}
+                    <div class="row vertical-align" style="border-bottom: 0.5px solid lightgray;">
+                        <h3 style="flex: 1; margin: 5px;">Python Compiler</h3>
+                        <input class="blue button" type="submit" value="Run" />
+                    </div>
+                    <textarea style="resize: none;" id="code" name="code">{{ code }}</textarea>
+                </form>
+            </div>
+            <div class="col" style="flex: 1;">
+                <div class="row" style="border-left: 0.5px solid gray;">
+                    <h3 style="flex: 1; margin: 5px;">Output</h3>
+                </div>
+                <textarea class="output" style="flex: 1;" disabled>{{ output }}</textarea>
+            </div>
+        </div>
+        <script>
+            var code = CodeMirror.fromTextArea(document.getElementById('code'), {
+                mode: 'python',
+                theme: 'eclipse',
+                lineNumbers: true,
+                styleActiveLine: true,
+                matchBrackets: true,
+            });
+            code.setSize("100%", "100%");
+        </script>
+{% endblock %}

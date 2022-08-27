@@ -1,0 +1,74 @@
+{% extends "forum/index.html" %}
+
+{% block content %}
+        <div class="content">
+            <div class="row">
+                <div class="box shadow">
+                    <h1>Join a Private Room</h1>
+                    <div class="divider"></div>
+                    <form class="col" method="post" action="/room/">
+                        {% csrf_token %}
+                        <input class="gray form-button" type="text" name="username" placeholder="Username" value="{{ my_profile.user }}" />
+                        <input class="gray form-button" type="text" name="room_name" placeholder="Room Name" required/>
+                        <input class="gray form-button" type="text" name="password" placeholder="Room Password" required/>
+                        <span style="text-align: center; color: red; font-size: 12px;">{{ errormsg }}</span>
+                        <input class="blue form-button" type="submit" value="Join Private Room" />
+                        <span style="font-size: 14px;">*A new room will be created if it does not already exist.</span>
+                    </form>
+                </div>
+                <div class="box shadow">
+                    <h1>Join a Public Room</h1>
+                    <div class="divider"></div>
+                    <form class="col" method="post" action="/room/">
+                        {% csrf_token %}
+                        <input class="gray form-button" type="text" name="username" placeholder="Username" value="{{ my_profile.user }}" />
+                        <input class="gray form-button" type="text" name="room_name" placeholder="Room Name" required/>
+                        <input class="blue form-button" type="submit" value="Join Public Room" />
+                        <span style="font-size: 14px;">*A new room will be created if it does not already exist.</span>
+                    </form>
+                </div>
+                <div class="box shadow">
+                    <h1>Python Compiler</h1>
+                    <div class="divider"></div>
+                    <form class="col" method="get" action="/compiler/">
+                        <span style="text-align: center; font-size: 14px; margin-bottom: 5px;">Don't want to join a room? Use the compiler by itself!</span>
+                        <input class="blue form-button" type="submit" value="Get Started &#8594" />
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="content row">
+            <div class="col box shadow vertical-align" style="padding-top: 30px; padding-bottom: 30px;">
+                <h1>Join a Private Room</h1>
+                <div class="divider"></div>
+                <form class="col" method="post" action="/room/">
+                    {% csrf_token %}
+                    <input class="form-button gray" name="username" type="text" placeholder="Username" value="{{ my_profile.user }}" />
+                    <input class="form-button gray" name="room_name" type="text" placeholder="Room Name" />
+                    <input class="form-button gray" name="password" type="text" placeholder="Room Password" />
+                    <div style="color: red; text-align: center;">{{ errormsg }}</div>
+                    <input class="form-button blue" id="private_submit" type="submit" value="Join Private Room" />
+                </form>
+            </div>
+            <div class="col box shadow vertical-align" style="padding-top: 30px; padding-bottom: 30px;">
+                <h1>Join a Public Room</h1>
+                <div class="divider"></div>
+                <form class="col" method="post" action="/room/">
+                    {% csrf_token %}
+                    <input class="form-button gray" name="username" type="text" placeholder="Username" value="{{ my_profile.user }}" />
+                    <input class="form-button gray" name="room_name" type="text" placeholder="Room Name" />
+                    <input class="form-button blue" type="submit" value="Join Public Room" />
+                </form>
+            </div>
+            <div class="col box shadow vertical-align" style="padding-top: 30px; padding-bottom: 30px;">
+                <h1>Python Compiler</h1>
+                <div class="divider"></div>
+                <div class="col vertical-align">
+                    <p style="text-align: center;">Don't want to join a room? Use the compiler by itself!</p>
+                    <form method="get" action="/compiler/">
+                        <input class="form-button blue" type="submit" value="Get Started &#8594" />
+                    </form>
+                </div>
+            </div>
+        </div> -->
+{% endblock %}

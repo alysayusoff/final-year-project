@@ -1,0 +1,47 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content col vertical-align">
+           <form method="post">
+                {% csrf_token %}
+                <div class="box shadow col vertical-align" style="padding: 10px 15px;">
+                    <div class="row vertical-align" style="margin: 10px 0;">
+                        <h1>LivePile</h1>
+                        <img src="../../static/imgs/logo.png" height="25" width="25" style="margin-left: 10px;" />
+                    </div>
+                    <div class="divider" style="width: 100%;"></div>
+                    <span style="font-size: 20px; font-weight: bold; margin-bottom: 8px;">Register</span>
+                    {% if registered %}
+                    <span style="margin: 5px;">Thank you for registering. Login <a class="a-link" href="/login/">here</a>.</span>
+                    {% else %}
+                    <span>{{ profileForm.fname }}</span>
+                    <span>{{ profileForm.lname }}</span>
+                    <span>{{ userForm.username }}</span>
+                    <span>{{ userForm.email }}</span>
+                    <span>{{ userForm.password }}</span>
+                    <span>{{ userForm.reenter }}</span>
+                    <span id="password-error" style="font-size: 14px; color: red;"></span>
+                    {% if userForm.errors or profileForm.errors %}
+                    <span style="font-size: 14px; margin-top: 5px; color: red;">{{ userForm.errors }}</span>
+                    <span style="font-size: 14px; margin-top: 5px; color: red;">{{ profileForm.errors }}</span>
+                    {% endif %}
+                    <input class="blue form-button" type="submit" value="Register" />
+                    <span style="font-size: 14px; margin-top: 5px;">Already have an account? Login <a class="a-link" href="/login/">here</a>.</span>
+                    {% endif %}
+                </div>
+            </form>
+        </div>
+        <script>
+            document.querySelector('#confirm').onkeyup = function(e) {
+                const password = document.querySelector('#password').value;
+                const confirm = document.querySelector('#confirm').value;
+
+                let text = "";
+                if (confirm !== password) { 
+                    text = "Re-entered password does not match.";
+            } 
+                else { text = ""; }
+                document.getElementById("password-error").innerHTML = text;
+            }
+        </script>
+{% endblock %}

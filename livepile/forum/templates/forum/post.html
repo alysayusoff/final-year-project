@@ -1,0 +1,118 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content">
+            {% if post %}
+            <div class="col">
+                <!-- Post -->
+                <div class="box shadow">
+                <!-- <div> -->
+                    <div class="row">
+                        <div class="col horizontal-align" style="flex: 1;">
+                            <h1 style="text-align: left; font-weight: 500;">{{ post.title }}</h1>
+                            {% if post.tags %}
+                            <div class="row" style="margin-top: 5px;">
+                                {% for tag in post.get_tags %}
+                                <form class="col" method="post" action="/search/">
+                                    {% csrf_token %}
+                                    <input class="tag" name="tag" type="submit" value="{{ tag }}" />
+                                </form>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <!-- <div class="col" style="align-items: flex-end;">
+                            <span>Posted by <a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'profile' post.author %}">{{ post.author }}</a></span>
+                            <span>{{ post.get_elapsed_time }}ago</span>
+                        </div> -->
+                    </div>
+                    <div class="divider"></div>
+                    <div style="margin-bottom: 10px;">
+                        {{ post.content|safe }}
+                    </div>
+                    {% if post.code %}
+                    <div class="col">
+                        <h3>Code</h3>
+                        <textarea id="original-code" style="resize: none; margin: 5px 0; padding: 5px; color: black; background-color: white; border-color: gray;" disabled>{{ post.code|safe }}</textarea>
+                    </div>
+                    <div class="col" style="align-items: flex-end; margin: 5px 0;">
+                        <span>Posted by <a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'profile' post.author %}">{{ post.author }}</a></span>
+                        <span>{{ post.get_elapsed_time }}ago</span>
+                    </div>
+                    {% endif %}
+                </div>
+                <!-- Replies -->
+                <div class="box shadow">
+                <!-- <div> -->
+                    <h2 style="font-weight: 500;">Replies ({{ post.get_num_replies }})</h2>
+                    {% if replies %}
+                    {% for reply in replies %}
+                    <div class="divider"></div>
+                    <div style="margin-bottom: 10px;">
+                        {{ reply.content|safe }}
+                    </div>
+                    {% if reply.code %}
+                    <div class="row">
+                        <div style="flex: 1; margin-right: 5px;">
+                            <b>Original Code</b>
+                            <pre>{{ post.code }}</pre>
+                        </div>
+                        <div style="flex: 1; margin-left: 5px;">
+                            <b>Edited Code</b>
+                            <pre>{{ reply.code|safe }}</pre>
+                        </div>
+                    </div>
+                    {% endif %}
+                    <div class="col" style="align-items: flex-end;">
+                        <span><a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'profile' reply.author %}">{{ reply.author }}</a></span>
+                        <span>{{ reply.get_elapsed_time }}ago</span>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="divider"></div>
+                    No replies at the moment. Be the first to reply!
+                    {% endif %}
+                </div>
+                <!-- Form -->
+                <div class="box shadow">
+                <!-- <div> -->
+                    <h2 style="font-weight: 500;">Reply to this question</h2>
+                    <div class="divider"></div>
+                    <form class="col" method="post" action="{% url 'post' post.pk %}">
+                        {% csrf_token %}
+                        <textarea name="content" style="resize: none; padding: 5px;" rows="5" placeholder="Write your reply here" required></textarea>
+                        <span style="font-size: 13px; margin: 2px 0 10px 0;">Any output can be placed within &#60;code&#62;...&#60;/code&#62; e.g. &#60;code&#62;Hello World!&#60;/code&#62;</span>
+                        <div class="row">
+                            <div class="col" style="flex: 1; margin-right: 5px">
+                                <b>Original Code</b>
+                                <textarea id="original" style="resize: none; padding: 5px; margin-top: 5px;" rows="10" disabled>{{ post.code }}</textarea>
+                            </div>
+                            <div class="col" style="flex: 1; margin-left: 5px">
+                                <b>Edit the Code!</b>
+                                <textarea id="code" name="code" style="resize: none; padding: 5px; flex: 1; margin-top: 5px;" rows="10">{{ post.code }}</textarea>
+                            </div>
+                            
+                        </div>
+                        <span style="color: red; margin-top: 5px;">{{ errormsg }}</span>
+                        <input class="blue form-button" style="margin: 5px 0 0 0; width: fit-content;" type="submit" value="REPLY" />
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="box shadow center">
+                <span>Post not found. <a class="a-link" href="/">Go home</a>.</span>
+            </div>
+            {% endif %}
+        </div>
+        <script>
+            document.getElementById('code').addEventListener('keydown', function(e) {
+                if (e.key == 'Tab') {
+                    e.preventDefault();
+                    var start = this.selectionStart;
+                    var end = this.selectionEnd;
+                    this.value = this.value.substring(0, start) + "   " + this.value.substring(end);
+                    this.selectionStart = this.selectionEnd = start + 3;
+                }
+            });
+        </script>
+{% endblock %}

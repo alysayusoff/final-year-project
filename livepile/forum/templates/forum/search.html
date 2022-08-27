@@ -1,0 +1,44 @@
+{% extends "./index.html" %}
+
+{% block content %}
+        <div class="content">
+            <div class="col">
+                <div class="box shadow">
+                    <h2>Posts related to "{{ input }}"</h2>
+                    {% if results %}
+                    {% for post in results %}
+                    <div class="divider"></div>
+                    <div style="font-size: 14px;">
+                        <a style="text-decoration: none; color: black; font-weight: bold;" href="{% url 'profile' post.author %}">{{ post.author }}</a>
+                        posted a question 
+                        <span style="font-weight: bold;">
+                            {{ post.get_elapsed_time }}ago
+                        </span>
+                    </div>
+                    <div style="font-size: 20px; margin: 3px 0 10px 0;">
+                        <a class="title" style="text-decoration: none; color: black;" href="{% url 'post' post.pk %}">{{ post.title }}</a>
+                    </div>
+                    <div class="row">
+                        {% if post.get_tags %}
+                        {% for tag in post.get_tags %}
+                        <form class="col" method="post" action="/search/">
+                            {% csrf_token %}
+                            <input class="tag" name="tag" type="submit" value="{{ tag }}" />
+                        </form>
+                        {% endfor %}
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <div class="divider"></div>
+                    No posts found.
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {{ input|json_script:"searchInput" }}
+        <script>
+            const searchInput = JSON.parse(document.getElementById('searchInput').textContent);
+            document.getElementById('search').value = searchInput;
+        </script>
+{% endblock %}
