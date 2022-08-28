@@ -6,7 +6,7 @@
                 <div class="box shadow">
                     <h1>Join a Private Room</h1>
                     <div class="divider"></div>
-                    <form class="col" method="post" action="/room/">
+                    <form style="margin: 0 15%;" class="col" method="post" action="/room/">
                         {% csrf_token %}
                         <input class="gray form-button" type="text" name="username" placeholder="Username" value="{{ my_profile.user }}" />
                         <input class="gray form-button" type="text" name="room_name" placeholder="Room Name" required/>
@@ -19,7 +19,7 @@
                 <div class="box shadow">
                     <h1>Join a Public Room</h1>
                     <div class="divider"></div>
-                    <form class="col" method="post" action="/room/">
+                    <form style="margin: 0 15%;" class="col" method="post" action="/room/">
                         {% csrf_token %}
                         <input class="gray form-button" type="text" name="username" placeholder="Username" value="{{ my_profile.user }}" />
                         <input class="gray form-button" type="text" name="room_name" placeholder="Room Name" required/>
@@ -30,7 +30,7 @@
                 <div class="box shadow">
                     <h1>Python Compiler</h1>
                     <div class="divider"></div>
-                    <form class="col" method="get" action="/compiler/">
+                    <form style="margin: 0 15%;" class="col" method="get" action="/compiler/">
                         <span style="text-align: center; font-size: 14px; margin-bottom: 5px;">Don't want to join a room? Use the compiler by itself!</span>
                         <input class="blue form-button" type="submit" value="Get Started &#8594" />
                     </form>

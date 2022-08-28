@@ -83,6 +83,4 @@ def room(request):
         except Exception as e:
             print("views.room() POST threw an error:", e)
 
-    context['default'] = 'print("Hello World!")'
-
     return render(request, 'py_compiler/room.html', context)
