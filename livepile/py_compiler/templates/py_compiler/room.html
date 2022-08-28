@@ -80,16 +80,19 @@
                 else if (e.keyCode === 13) { document.querySelector('#send').click(); }
             }
             document.querySelector('#send').onclick = function (e) {
-                var message = ': ' + document.querySelector('#message').value;
-                if (message.endsWith('\n')) {
-                    message = message.replace(/\n+$/, "");
+                var initialMessage = document.querySelector('#message').value;
+                if (initialMessage.endsWith('\n')) {
+                    initialMessage = initialMessage.replace(/\n+$/, "");
                 }
-                document.querySelector('#message').value = '';
-                chatSocket.send(JSON.stringify({ 
-                    'receive_type': 'chat',
-                    'username': userName, 
-                    'message': message
-                }));
+                if (initialMessage != '') {
+                    var message = ': ' + initialMessage;
+                    document.querySelector('#message').value = '';
+                    chatSocket.send(JSON.stringify({ 
+                        'receive_type': 'chat',
+                        'username': userName, 
+                        'message': message
+                    }));
+                }
             }
             // compiler
             document.getElementById('compiler').addEventListener('keydown', function(e) {
