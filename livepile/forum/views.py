@@ -250,7 +250,7 @@ def tags(request):
     return render(request, 'forum/tags.html', context)
 
 # helper functions
-# https://www.delftstack.com/howto/python/position-of-character-in-string/
+# https://www.delftstack.com/howto/python/position-of-character-in-string/#use-the-for-loop-to-find-the-position-of-a-character-in-a-string
 def find_indices(s):
     list = []
     for pos, char in enumerate(s):
