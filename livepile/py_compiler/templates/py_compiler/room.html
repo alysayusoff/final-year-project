@@ -20,7 +20,7 @@
             <div class="col" style="flex: 1;">
                 <!-- welcome message -->
                 <div style="padding: 10px; border-bottom: 1px solid #c3c3c3;">
-                    <h2>Welcome to {{ room_name }}, {{ username }}!</h2>
+                    <h2>Welcome to {{ room_type }} {{ room_name }}, {{ username }}!</h2>
                     <span>In this room, you can chat with other collaborators and write code at the same time. Send a message or type in the compiler to get started!</span>
                 </div>
                 <!-- participants -->
@@ -40,6 +40,7 @@
             </div>
         </div>
         {{ room_name|json_script:"room_name" }}
+        {{ room_type|json_script:"room_type" }}
         {{ username|json_script:"username" }}
         <script>
             // var codeMirror = CodeMirror.fromTextArea(document.getElementById('compiler'), {
@@ -53,9 +54,10 @@
 
             var runCode;
             const roomName = JSON.parse(document.getElementById('room_name').textContent);
+            const roomType = JSON.parse(document.getElementById('room_type').textContent);
             const userName = JSON.parse(document.getElementById('username').textContent);
 
-            const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomName + '/?username=' + userName);
+            const chatSocket = new WebSocket('ws://' + window.location.host + '/ws/' + roomType + '/' + roomName + '/?username=' + userName);
             chatSocket.onclose = function (e) { console.error('Chat socket closed unexpectedly.'); }
 
             // send message when a user enters

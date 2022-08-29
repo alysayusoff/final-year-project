@@ -9,7 +9,9 @@ class CompilerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope['query_string'].decode("utf-8").replace('username=', '')
         self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
+        self.room_type = self.scope['url_route']['kwargs']['room_type']
+        groupname = self.room_type + self.room_name
+        self.room_group_name = 'chat_%s' % groupname
         
         await self.channel_layer.group_add(
             self.room_group_name,
@@ -31,7 +33,7 @@ class CompilerConsumer(AsyncWebsocketConsumer):
             username = data['username']
             message = data['message']
 
-            participants = await self.get_participants(self.user, self.room_name)
+            participants = await self.get_participants(self.room_name, self.room_type)
 
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'update_users',
@@ -44,7 +46,7 @@ class CompilerConsumer(AsyncWebsocketConsumer):
             username = data['username']
             message = data['message']
 
-            participants = await self.remove_user_from_room(self.user, self.room_name)
+            participants = await self.remove_user_from_room(self.user, self.room_name, self.room_type)
 
             await self.channel_layer.group_send(self.room_group_name, {
                 'type': 'update_users',
@@ -136,17 +138,24 @@ class CompilerConsumer(AsyncWebsocketConsumer):
             }))
 
     @sync_to_async
-    def get_participants(self, username, room_name):
-        return list(Room.objects.get(room_name=room_name).get_participants().values('username'))
+    def get_participants(self, room_name, room_type):
+        try:
+            return list(Room.objects.get(room_name=room_name, type=room_type).get_participants().values('username'))
+        except Exception as e:
+            print("@sync_to_async get_participants() threw an error:", e)
 
     @sync_to_async
-    def remove_user_from_room(self, username, room_name):
-        # delete user
-        Participant.objects.get(username=username).delete()
-        # check the number of participants in a room, if zero, delete room
-        if (Room.objects.get(room_name=room_name).get_number_of_participants() == 0):
-            Room.objects.get(room_name=room_name).delete()
-        # if not, return participants
-        else:
-            return list(Room.objects.get(room_name=room_name).get_participants().values('username'))
+    def remove_user_from_room(self, username, room_name, room_type):
+        try:
+            # delete user
+            room = Room.objects.get(room_name=room_name, type=room_type)
+            Participant.objects.get(username=username, room=room).delete()
+            # check the number of participants in a room, if zero, delete room
+            if (room.get_number_of_participants() == 0):
+                room.delete()
+            # if not, return participants
+            else:
+                return list(room.get_participants().values('username'))
+        except Exception as e:
+            print("@sync_to_async remove_user_from_room() threw an error:", e)
         

@@ -46,6 +46,8 @@ def room(request):
     # form has been submitted
     if request.method == 'POST':
         try:
+            room_type = request.POST['room_type']
+            context['room_type'] = room_type
             room_name = request.POST['room_name']
             context['room_name'] = room_name
             # if username input is exmpty, name user to Anon
@@ -59,18 +61,18 @@ def room(request):
             else:
                 password = ''
             # get/create room
-            if (Room.objects.filter(room_name=room_name).exists()):
-                room = Room.objects.get(room_name=room_name)
+            if (Room.objects.filter(room_name=room_name, type=room_type).exists()):
+                room = Room.objects.get(room_name=room_name, type=room_type)
             else:
-                room = Room.objects.create(room_name=room_name, password=password)
+                room = Room.objects.create(room_name=room_name, password=password, type=room_type)
             # check password against room password
             if (room.password != password):
                 context['errormsg'] = 'Incorrect password.'
                 return render(request, 'py_compiler/join.html', context)
             else:
                 # check if a user with same username already exists
-                while (Participant.objects.filter(username=username).exists()):
-                    tmp = Participant.objects.get(username=username).username
+                while (Participant.objects.filter(username=username, room=room).exists()):
+                    tmp = Participant.objects.get(username=username, room=room).username
                     match = re.match(r"([a-z]+)([0-9]+)", tmp, re.I)
                     if match:
                         items = match.groups()
@@ -78,7 +80,7 @@ def room(request):
                     else:
                         username = username + str(1)
                 # add user to room
-                Participant.objects.create(username=username, room=Room.objects.get(room_name=room_name))
+                Participant.objects.create(username=username, room=room)
                 context['username'] = username
         except Exception as e:
             print("views.room() POST threw an error:", e)
